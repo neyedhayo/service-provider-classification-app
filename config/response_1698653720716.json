@@ -1,0 +1,16 @@
+{
+  "executionErrors": {
+    "created": "2023-10-30",
+    "INFO": "127.0.0.1:51958 - 'POST /predict HTTP/1.1' 500 Internal Server Error",
+    "allErrors": [
+      {
+        "occurrence": "first error after running 'uvicorn app.main:app --reload' or 'python3 make_request.py' on /docs",
+        "detail": "This ColumnTransformer instance is not fitted yet. Call 'fit' with appropriate arguments before using this estimator."
+      },
+      {
+        "occurrence": "second error",
+        "detail": "A given column is not a column of the dataframe"
+      }
+    ]
+  }
+}
