@@ -1,7 +1,6 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status, Request, Depends
 from pydantic import BaseModel
 import pandas as pd
-
 import sys
 import os
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -18,9 +17,29 @@ app = FastAPI()
 classifier = ServiceProviderClassifier()
 classifier.load_model(model_path)
 
+# generating access to the app by user-authentication
+API_KEY = os.getenv("MY_SECRET_API_KEY")
+def get_api_key(request: Request):
+    api_key = request.headers.get("Authorization")
+    
+    if api_key == f"Bearer {API_KEY}":
+        return api_key
+
+    else:
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "Could not validate credentials",
+        )
+
+@app.get("/private-area/")
+def read_private_area(api_key: str = Depends(get_api_key)):
+    return {"message": "Hello, private user!"}
+
+# base model telephone number class
 class TelephoneNumber(BaseModel):
     Telephone_Number: str
 
+# POST request to test the model, from preprocessing steps to prediction
 @app.post("/predict")
 async def predict_service_provider(telephone_number: TelephoneNumber):
     try:
